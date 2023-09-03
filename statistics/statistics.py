@@ -1,7 +1,7 @@
 from string import ascii_uppercase
-from typing import Dict, List, Tuple
+from typing import Dict, Tuple
 
-import openpyxl
+from openpyxl import load_workbook
 from openpyxl.chart import PieChart, Reference, Series
 from openpyxl.chart.label import DataLabelList
 from openpyxl.styles import PatternFill
@@ -12,7 +12,7 @@ from settings import (COLOR_BAD, COLOR_GOOD, INVERT_MONTHS, PATH_TO_DATA,
 
 
 def get_statistics(data):
-    workbook = openpyxl.load_workbook(PATH_TO_DATA)
+    workbook = load_workbook(PATH_TO_DATA)
     worksheet = workbook.get_sheet_by_name(RESULT_NAME_SHEET)
 
     worksheet["A1"] = "Баланс:"
