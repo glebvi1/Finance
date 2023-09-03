@@ -13,7 +13,9 @@ from settings import (COLOR_BAD, COLOR_GOOD, INVERT_MONTHS, PATH_TO_DATA,
 
 def get_statistics(data):
     workbook = load_workbook(PATH_TO_DATA)
-    worksheet = workbook.get_sheet_by_name(RESULT_NAME_SHEET)
+    if RESULT_NAME_SHEET in workbook.sheetnames:
+        del workbook[RESULT_NAME_SHEET]
+    worksheet = workbook.create_sheet(RESULT_NAME_SHEET)
 
     worksheet["A1"] = "Баланс:"
 
