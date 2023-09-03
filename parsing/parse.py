@@ -1,6 +1,7 @@
 import yadisk
 
-from settings import PATH_TO_DATA, TOKEN, YADISK_PATH_TO_DATA
+from config import TOKEN, YADISK_PATH_TO_DATA
+from settings import PATH_TO_DATA
 
 y = yadisk.YaDisk(token=TOKEN)
 
