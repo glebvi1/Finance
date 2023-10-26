@@ -8,7 +8,7 @@ from openpyxl.styles import PatternFill
 
 from parsing.models import MonthCategories
 from settings import (COLOR_BAD, COLOR_GOOD, INVERT_MONTHS, PATH_TO_DATA,
-                      RESULT_NAME_SHEET)
+                      RESULT_NAME_SHEET, COLOR_NEUTRAL)
 
 
 def get_statistics(data):
@@ -28,8 +28,11 @@ def get_statistics(data):
         current_expenditure, current_income = __create_month_description(worksheet, month_category, index_number)
         __create_charts(worksheet, index_number, month_category)
 
+        after = global_income - global_expenditure
         global_expenditure += current_expenditure
         global_income += current_income
+
+        __create_month_description2(worksheet, after, global_income - global_expenditure, index_number)
 
         index_number += 10
 
@@ -37,10 +40,19 @@ def get_statistics(data):
     workbook.save(PATH_TO_DATA)
 
 
+def __create_month_description2(worksheet, after: int, before: int, index_number: int):
+    """Создание полей: сумма до начала месяца и после"""
+    worksheet[f"B{index_number + 2}"] = "До"
+    worksheet[f"C{index_number + 2}"] = after
+
+    worksheet[f"B{index_number + 3}"] = "После"
+    worksheet[f"C{index_number + 3}"] = before
+
+
 def __create_month_description(worksheet, month_category: MonthCategories, index_number: int) -> Tuple[int, int]:
     """Создание полей: месяц, расход, доход, дельта"""
     month_category: MonthCategories
-    worksheet[f"A{index_number}"] = INVERT_MONTHS[month_category.month]
+    worksheet[f"A{index_number + 1}"] = INVERT_MONTHS[month_category.month]
     expenditure, income = month_category.get_expenditure(), month_category.get_income()
 
     worksheet[f"B{index_number - 1}"] = "Расход"
@@ -71,6 +83,12 @@ def __create_font(worksheet, index_number: int) -> None:
     else:
         worksheet[f"C{index_number + 1}"].fill = worksheet[f"B{index_number + 1}"].fill =\
             PatternFill(start_color=COLOR_BAD, end_color=COLOR_BAD, fill_type="solid")
+
+    worksheet[f"B{index_number + 2}"].fill = worksheet[f"C{index_number + 2}"].fill = \
+        PatternFill(start_color=COLOR_NEUTRAL, end_color=COLOR_NEUTRAL, fill_type="solid")
+
+    worksheet[f"B{index_number + 3}"].fill = worksheet[f"C{index_number + 3}"].fill = \
+        PatternFill(start_color=COLOR_NEUTRAL, end_color=COLOR_NEUTRAL, fill_type="solid")
 
 
 def __create_charts(worksheet, index_number: int, month_category: MonthCategories) -> None:
