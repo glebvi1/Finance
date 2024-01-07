@@ -4,7 +4,7 @@ from typing import Dict, List, Tuple
 import pandas as pd
 
 from parsing.models import MonthCategories
-from settings import MONTHS, PATH_TO_DATA
+from settings import MONTHS, PATH_TO_DATA, CATEGORY_NAME_SHEET, COLORS
 
 
 def prepare_data() -> List[MonthCategories]:
@@ -53,3 +53,23 @@ def __create_month_data(data, name_of_category: str, name_of_cost: str) -> Dict[
             result[category] = 0
         result[category] += summa
     return result
+
+
+def create_dict_categories() -> Tuple[Dict[str, int], Dict[str, int]]:
+    """Нумерация категорий расходов и доходов, используется для выбора цвета графика"""
+    def create_dict(add=""):
+        result = {}
+        len_colors = len(COLORS)
+
+        for index, category in enumerate(data["Название" + add]):
+            if isinstance(category, float) and math.isnan(category):
+                break
+            result[category] = COLORS[index % len_colors]
+
+        return result
+
+    data = pd.read_excel(PATH_TO_DATA, sheet_name=CATEGORY_NAME_SHEET, header=0)
+    expenditure_category = create_dict()
+    income_category = create_dict(".1")
+
+    return expenditure_category, income_category
